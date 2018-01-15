@@ -5,6 +5,7 @@
       </slot>
     </div>
     <div class="dots">
+      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots" :key="item"></span>
     </div>
   </div>
 </template>
@@ -14,6 +15,12 @@ import BScroll from "better-scroll"
 import {addClass} from "common/js/dom"
 export default{
     name: 'slider',
+    data(){
+      return{
+        dots:[],
+        currentPageIndex:0,
+      }
+    },
     props: {
       loop: {
         type: Boolean,
@@ -31,7 +38,13 @@ export default{
     mounted(){
         setTimeout(()=>{
             this._SetSliderWidth();
+            this. _initDots();
             this._initSlider();
+
+            if(this.autoPlay){
+              this._play();
+            }
+
         },20)
     },
     methods:{
@@ -63,7 +76,35 @@ export default{
                 snapThreshold: 0.3,//用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页
                 snapSpeed: 400//轮播图切换的动画时间
             })
+            //滚动一张
+             this.slider.on('scrollEnd', () => {
+               let pageIndex = this.slider.getCurrentPage().pageX;
+               if (this.loop) {
+                  pageIndex -= 1
+                } 
+               this.currentPageIndex = pageIndex;
+
+               if(this.autoPlay){
+                 clearTimeout(this.timer);
+                 this._play();
+               }
+             });
+            
         },
+        //初始化dots 
+        _initDots(){
+          this.dots=new Array(this.children.length);
+        },
+        _play(){
+          let pageIndex = this.currentPageIndex+1;
+          if(this.loop){
+            pageIndex+=1;
+          }
+          this.timer = setTimeout(()=>{
+            this.slider.goToPage(pageIndex,0,400)
+          },this.interval)
+        }
+
     },
 }
 </script>
