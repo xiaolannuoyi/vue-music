@@ -112,6 +112,9 @@ export default{
         }
 
     },
+    destroyed() {
+      clearTimeout(this.timer)
+    },
 }
 </script>
 
