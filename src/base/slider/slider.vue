@@ -44,12 +44,18 @@ export default{
             if(this.autoPlay){
               this._play();
             }
-
         },20)
+        window.addEventListener('resize',()=>{
+              if(!this.slider){
+                return 
+              }
+              this._SetSliderWidth(true);
+              this.slider.refresh();//重新刷新slider
+            })
     },
     methods:{
         //设置宽度,定义
-        _SetSliderWidth(){
+        _SetSliderWidth(isResize){
             this.children = this.$refs.sliderGroup.children;
 
             let width=0;
@@ -60,7 +66,7 @@ export default{
                 child.style.width = sliderWidth + "px";
                 width += sliderWidth;//总宽度
             }
-            if(this.loop){//如果循环轮播
+            if(this.loop && !isResize){//如果循环轮播
                 width += 2*sliderWidth;//在总宽度的基础上再加2个屏幕宽度
             }
             this.$refs.sliderGroup.style.width = width + "px";
