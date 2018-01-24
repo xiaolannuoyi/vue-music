@@ -13,11 +13,8 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
-var express = require('express')
-var axios = require('axios')
-var app = express()
-var apiRoutes = express.Router()
-app.use('/api', apiRoutes)
+const express = require('express')
+const axios = require('axios')
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -51,7 +48,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     },
     after(app){
       //歌单
-      apiRoutes.get('/getDiscList', function (req, res) {
+      app.get('/getDiscList', function (req, res) {
         var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {
           headers: {
