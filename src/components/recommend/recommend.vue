@@ -1,26 +1,37 @@
 <template>
   <div class="recommend">
-      <div class="recommend-content">
-        <div v-if="this.recommends.length" class="slider-wrapper">
+      <scroll ref="scroll" class="recommend-content" :data="discList">
+        <div>
+          <div v-if="this.recommends.length" class="slider-wrapper">
             <slider>
                 <div v-for="items in recommends" :key="items.id">
                    <a :href="items.linkUrl">
-                      <img :src="items.picUrl" alt="">
+                      <img @load="loadImage" :src="items.picUrl" alt="">
                    </a>
                 </div>
             </slider>
+          </div>
+          <div class="recommend-list">
+            <h1 class="list-title">热门歌单推荐</h1>
+            <ul>
+              <li v-for="item in discList" class="item" :key="item.id">
+                <div class="icon">
+                  <img height="60" width="60" :src="item.imgurl" alt="">
+                </div>
+                <div class="text">
+                  <h2 class="name" v-html="item.creator.name"></h2>
+                  <p class="desc" v-html="item.dissname"></p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="recommend-list">
-          <h1 class="list-title">热门歌单推荐</h1>
-          <ul>
-          </ul>
-        </div>
-      </div>
+      </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-
+import Scroll from "base/scroll/scroll"
 import Slider from "base/slider/slider"
 import {ERR_OK} from 'api/config'
 import {getRecommend,getDiscList} from 'api/recommend'
@@ -29,13 +40,17 @@ import {getRecommend,getDiscList} from 'api/recommend'
     data(){
       return{
         recommends:[],
+        discList:[]
       }
     },
     components:{
-      Slider
+      Slider,Scroll
     },
     created(){
-      this._getRecommend();
+      setTimeout(()=>{
+        this._getRecommend();
+      },2000)
+      //this._getRecommend();
       this._getDiscList();
     },
     methods:{
@@ -51,9 +66,16 @@ import {getRecommend,getDiscList} from 'api/recommend'
         getDiscList().then((res) => {
           if (res.code === ERR_OK) {
             console.log(res.data.list);//返回接口数据
+            this.discList=res.data.list
           }
         })
       },
+      loadImage(){
+        if(!this.checkloaded){
+          this.checkloaded = true
+          this.$refs.scroll.refresh()
+        }
+      }
     },
     
   }
