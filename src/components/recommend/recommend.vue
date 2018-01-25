@@ -16,7 +16,7 @@
             <ul>
               <li v-for="item in discList" class="item" :key="item.id">
                 <div class="icon">
-                  <img height="60" width="60" :src="item.imgurl" alt="">
+                  <img height="60" width="60" v-lazy="item.imgurl" alt="">
                 </div>
                 <div class="text">
                   <h2 class="name" v-html="item.creator.name"></h2>
@@ -47,10 +47,10 @@ import {getRecommend,getDiscList} from 'api/recommend'
       Slider,Scroll
     },
     created(){
-      setTimeout(()=>{
-        this._getRecommend();
-      },2000)
-      //this._getRecommend();
+      // setTimeout(()=>{
+      //   this._getRecommend();
+      // },2000)
+      this._getRecommend();
       this._getDiscList();
     },
     methods:{
