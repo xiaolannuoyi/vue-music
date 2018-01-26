@@ -13,4 +13,13 @@ export function addClass(el, className) {
     newClass.push(className)
     el.className = newClass.join(' ')
   }
-  
+//获取元素的自定义属性,或者设置元素自定义属性的值 
+export function getData(el,name,val){
+  const prefix = "data-"
+  name = prefix + name;
+  if(val){
+    return el.setAttribute(name,val)
+  }else{
+    return el.getAttribute(name);
+  }
+}

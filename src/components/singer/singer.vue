@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="singer">
     <list-view :data="singers"></list-view>
   </div>
 </template>
@@ -100,6 +100,10 @@ const HOT_SINGER_LEN=10
   }
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
- 
+ <style scoped lang="stylus" rel="stylesheet/stylus">
+  .singer
+    position: fixed
+    top: 88px
+    bottom: 0
+    width: 100%
 </style>
