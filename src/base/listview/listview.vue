@@ -1,5 +1,6 @@
 <template>
   <scroll  class="listview" :data="data" ref="listview" :probeType="probeType" :listenScroll="listenScroll" @scroll="scroll">
+     <!-- 歌手 -->
      <ul>
        <li v-for="group in data" :key="group.id" class="list-group" ref="listGroup">
          <h2 class="list-group-title">{{group.title}}</h2>
@@ -11,11 +12,17 @@
          </ul>
        </li>
      </ul>
+     <!-- 右侧快捷入口 -->
      <div class="list-shortcut" @touchstart="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove">
        <ul>
          <li v-for="(item,index) in shortcutList" :class="{'current' : currentIndex===index}" :data-index="index" :key="item.id" class="item">{{item}}</li>
        </ul>
      </div>
+     <!-- 固定标题 -->
+     <div class="list-fixed" ref="fixed" v-show="fixedTitle"> 
+      <div class="fixed-title">{{fixedTitle}} </div>
+     </div>
+
   </scroll>
 </template>
 
@@ -24,11 +31,13 @@ import Scroll from "base/scroll/scroll"
 import {getData} from "common/js/dom"
 
 const ANCHOR_HEIGHT=18//侧边一个元素的高度
+const TITLE_HEIGHT=30//标题高度
 export default {
   data(){
     return {
       scrollY:-1,
       currentIndex:0,
+      diff:-1
     }
   },
   created(){
@@ -48,7 +57,13 @@ export default {
       return this.data.map((group)=>{
         return group.title.substr(0,1)
       })
-    }
+    },
+    fixedTitle() {//将标题固定到头部
+        if (this.scrollY > 0) {
+          return ''
+        }
+        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+      }
   },
   methods:{
     onShortcutTouchStart(e){
@@ -117,18 +132,24 @@ export default {
         console.log("height1",height1,"------height2",height2,"+++++++++++-newY",-newY)
         if(-newY >= height1 && -newY < height2){ //上线要有等于
           this.currentIndex= i;
+          this.diff = height2 + newY //上线到顶部的距离
           return 
         }
       }
       //当滚动到底部
       this.currentIndex = listHeight.length-2
-      
-        
-
+    },
+    diff(newVal){//实现标题向上顶的操作
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0;
+      if(this.fixedTop===fixedTop){
+        return 
+      }
+      this.fixedTop = fixedTop;
+      this.$refs.fixed.style.transform=`translate3d(0,${fixedTop}px,0)`
     }
   },
   components:{
-    Scroll
+    Scroll,
   }
 
 }
